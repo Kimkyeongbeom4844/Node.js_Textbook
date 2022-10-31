@@ -35,21 +35,27 @@ app
           return res.send("유저등록실패");
         }
         console.log("유저등록성공");
-        return res.send("유저등록성공");
+        return res.json(ok);
       }
     );
   });
 
 app.route("/:id").get((req, res) => {
-  console.log(req.params.id);
-  db.query(`select * from users where id=${req.params.id};`, (err, ok) => {
-    if (err) {
-      console.error(err);
-      return res.send("유저 정보가 없습니다.");
-    }
-    console.log("유저가 있습니다.");
-    return res.send(ok[0]);
-  });
+  // console.log(req.params.id);
+  if (req.params.id !== "favicon.ico") {
+    db.query(`select * from users where id=${req.params.id};`, (err, ok) => {
+      if (err) {
+        console.error(err);
+        return res.send(err);
+      }
+      if (ok[0] !== undefined) {
+        console.log("유저가 있습니다.");
+        return res.send(ok[0]);
+      }
+      console.log("유저가 없습니다.");
+      return res.send("user is not found");
+    });
+  }
 });
 
 app.listen(process.env.PORT, process.env.HOST, () => {
