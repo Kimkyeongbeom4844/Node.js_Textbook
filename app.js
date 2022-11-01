@@ -2,6 +2,8 @@ const express = require("express");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const mysql = require("mysql");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 dotenv.config();
 const db = mysql.createConnection({
   host: process.env.DATABASE_HOST,
@@ -22,7 +24,30 @@ app.use(express.urlencoded({ extended: true }));
 app
   .route("/")
   .get((req, res) => {
-    return res.send(req.method);
+    const refresh = jwt.sign({}, process.env.PRIVATE_KEY, {
+      algorithm: "HS256",
+      expiresIn: "14d",
+    });
+
+    jwt.sign(
+      { id: "xops09685" },
+      process.env.PRIVATE_KEY,
+      {
+        algorithm: "HS256",
+        expiresIn: "1h",
+      },
+      (err, token) => {
+        if (err) {
+          console.error(err);
+          return res.send(err);
+        }
+        result = {
+          access_token: token,
+          refresh_token: refresh,
+        };
+        return res.json(result);
+      }
+    );
   })
   .post((req, res) => {
     db.query(
@@ -56,6 +81,40 @@ app.route("/:id").get((req, res) => {
       return res.send("user is not found");
     });
   }
+});
+
+app.route("/login").post((req, res) => {
+  console.log(req.body.access_token);
+  jwt.verify(
+    req.body.access_token,
+    process.env.PRIVATE_KEY,
+    { algorithms: "HS256" },
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.send(err);
+      }
+      console.log(result);
+      return res.send(result);
+    }
+  );
+});
+
+app.route("/refresh").post((req, res) => {
+  console.log(req.body.refresh_token);
+  jwt.verify(
+    req.body.refresh_token,
+    process.env.PRIVATE_KEY,
+    { algorithms: "HS256" },
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.send(err);
+      }
+      console.log(result.exp);
+      return res.send(result);
+    }
+  );
 });
 
 app.listen(process.env.PORT, process.env.HOST, () => {
