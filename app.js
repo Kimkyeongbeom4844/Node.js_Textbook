@@ -1,9 +1,10 @@
 const express = require("express");
+const cors = require("cors");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const mysql = require("mysql");
-const cookieParser = require("cookie-parser");
 const sign = require("./routers/sign");
+const cookie = require("./routers/cookie");
 
 dotenv.config();
 
@@ -23,9 +24,15 @@ const app = express();
 app.use(morgan("short"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 
 app.use("/sign", sign);
+app.use("/cookie", cookie);
 
 app
   .route("/")

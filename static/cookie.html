@@ -8,8 +8,24 @@
   </head>
   <body>
     <button class="getCookie">쿠키얻기</button>
+    <button class="sendCookie">받은쿠키주기</button>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-      document.querySelector(".getCookie").addEventListener("click", () => {});
+      document.querySelector(".getCookie").addEventListener("click", () => {
+        fetch("http://127.0.0.1:3000/cookie/", {
+          credentials: "include",
+        })
+          .then((res) => res.json())
+          .then((data) => console.log(data));
+      });
+      document.querySelector(".sendCookie").addEventListener("click", () => {
+        fetch("http://127.0.0.1:3000/cookie/", {
+          method: "POST",
+          credentials: "include",
+        })
+          .then((res) => res.json())
+          .then((data) => console.log(data));
+      });
     </script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 const express = require("express");
-const router = express.Router();
 const jwt = require("jsonwebtoken");
+const router = express.Router();
 
 router.route("/").get((req, res) => {
   const refresh = jwt.sign({}, process.env.PRIVATE_KEY, {
@@ -30,7 +30,7 @@ router.route("/").get((req, res) => {
 });
 
 router.route("/login").post((req, res) => {
-  console.log(req.body.access_token);
+  // console.log(req.body.access_token);
   jwt.verify(
     req.body.access_token,
     process.env.PRIVATE_KEY,
