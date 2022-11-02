@@ -3,8 +3,8 @@ const cors = require("cors");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const mysql = require("mysql");
-const sign = require("./routers/sign");
-const cookie = require("./routers/cookie");
+const sign = require("./router/sign");
+const cookie = require("./router/cookie");
 
 dotenv.config();
 

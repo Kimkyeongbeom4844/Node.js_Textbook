@@ -9,7 +9,7 @@ router.route("/").get((req, res) => {
   });
 
   jwt.sign(
-    { id: "xops09685" },
+    { id: "xops09685", password: "asdf1234" },
     process.env.PRIVATE_KEY,
     {
       algorithm: "HS256",
@@ -37,7 +37,7 @@ router.route("/login").post((req, res) => {
     { algorithms: "HS256" },
     (err, result) => {
       if (err) {
-        console.log(err);
+        console.log(err.name);
         return res.send(err);
       }
       console.log(result);
