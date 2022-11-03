@@ -3,6 +3,8 @@ const cors = require("cors");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const mysql = require("mysql");
+const socket = require("socket.io");
+const http = require("http");
 const sign = require("./router/sign");
 const cookie = require("./router/cookie");
 
@@ -19,7 +21,18 @@ db.connect((err) => {
   console.log("db연결성공");
 });
 
+//일반 express 서버
 const app = express();
+
+// 일반 express 서버를 http 서버로 업그레이드
+const server = http.createServer(app);
+
+//업그레이드된 서버를 소켓서버로
+const io = socket(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 app.use(morgan("short"));
 app.use(express.json());
@@ -84,7 +97,21 @@ app.use((err, req, res, next) => {
   res.status(500).send(err);
 });
 
-app.listen(process.env.PORT, process.env.HOST, () => {
+io.on("connection", (socket) => {
+  socket.on("login", (data) => {
+    console.log(data);
+  });
+  socket.on("message", (data) => {
+    console.log(data);
+    socket.emit("response", "메시지 전달 완료");
+  });
+  socket.on("logout", (data) => {
+    console.log(data);
+    socket.disconnect();
+  });
+});
+
+server.listen(process.env.PORT, process.env.HOST, () => {
   console.log(
     `app is running on http://${process.env.HOST}:${process.env.PORT}`
   );

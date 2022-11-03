@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>소켓을 공부해봅시다</title>
+  </head>
+  <body>
+    <button class="login">로그인</button>
+    <form action="" class="message">
+      <input type="text" id="chat" required />
+      <button type="submit">메시지전송</button>
+    </form>
+    <button class="logout">로그아웃</button>
+    <script
+      src="https://cdn.socket.io/4.5.3/socket.io.min.js"
+      integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const socket = io("ws://127.0.0.1:3000");
+      socket.disconnect();
+      document.querySelector(".login").addEventListener("click", () => {
+        if (!socket.connected) {
+          socket.connect();
+          console.log("로그인됨");
+        }
+      });
+      document.querySelector(".message").addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (socket.connected) {
+          socket.emit("message", {
+            message: document.querySelector("#chat").value,
+          });
+        } else {
+          console.log("소켓 연결 안됨");
+        }
+        document.querySelector("#chat").value = "";
+        document.querySelector("#chat").focus();
+      });
+      socket.on("response", (msg) => console.log(msg));
+
+      document.querySelector(".logout").addEventListener("click", () => {
+        if (socket.connected) {
+          console.log(socket.id);
+          socket.emit("logout", "로그아웃");
+        }
+      });
+    </script>
+  </body>
+</html>

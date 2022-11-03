@@ -13,6 +13,7 @@ router
       expires: new Date(Date.now() + 9000000),
       httpOnly: true,
       signed: true,
+      // secure: true,
     });
     return res.status(200).end();
   })
