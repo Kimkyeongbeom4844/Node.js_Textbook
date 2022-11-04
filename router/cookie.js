@@ -9,7 +9,7 @@ router
   .route("/")
   .get((req, res) => {
     console.log("send cookie to cli");
-    res.cookie("cookie_name", "qwer1234zxcvasdf", {
+    res.cookie("room_id", "4", {
       expires: new Date(Date.now() + 9000000),
       httpOnly: true,
       signed: true,
@@ -18,12 +18,12 @@ router
     return res.status(200).end();
   })
   .post((req, res) => {
-    if (!req.signedCookies.cookie_name) {
-      return res.json({ message: "no cookie in application" });
+    if (!req.signedCookies.room_id) {
+      return res.json({ message: "서명된 쿠키가 변조되었거나 없습니다." });
     }
     console.log(req.signedCookies);
-    res.clearCookie("cookie_name");
-    return res.json({ message: "send cookie to server" });
+    res.clearCookie("room_id");
+    return res.json({ message: "서명된 쿠키가 전송되었습니다." });
   });
 
 module.exports = router;

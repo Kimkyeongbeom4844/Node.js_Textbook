@@ -30,7 +30,7 @@ const server = http.createServer(app);
 //업그레이드된 서버를 소켓서버로
 const io = socket(server, {
   cors: {
-    origin: "*",
+    origin: true,
   },
 });
 
@@ -98,16 +98,36 @@ app.use((err, req, res, next) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("login", (data) => {
-    console.log(data);
+  console.log(`sessionId : ${socket.id}님이 접속하였습니다`);
+
+  const setCount = (room) => {
+    let count = 0;
+    for (let [i, v] of socket.adapter.sids) {
+      if (v.has(room)) count++;
+    }
+    io.to(room).emit("count", count);
+  };
+
+  // socket.use((socket, next) => {
+  //   console.log(socket);
+  //   next();
+  // });
+
+  socket.on("joinRoom", (data) => {
+    socket.join(data);
+    setCount(data);
   });
-  socket.on("message", (data) => {
-    console.log(data);
-    socket.emit("response", "메시지 전달 완료");
+
+  socket.on("chatting", (data) => {
+    console.log(socket.rooms, data);
+    if (socket.rooms.has(data.roomName)) {
+      io.to(data.roomName).emit("message", data.msg);
+    }
   });
-  socket.on("logout", (data) => {
-    console.log(data);
-    socket.disconnect();
+
+  socket.on("leave", (data) => {
+    socket.leave(data);
+    setCount(data);
   });
 });
 

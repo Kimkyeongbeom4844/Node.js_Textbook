@@ -37,7 +37,7 @@ router.route("/login").post((req, res) => {
     { algorithms: "HS256" },
     (err, result) => {
       if (err) {
-        console.log(err.name);
+        console.log(err);
         return res.send(err);
       }
       console.log(result);
