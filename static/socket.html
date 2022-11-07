@@ -5,16 +5,33 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>소켓을 배워봅시다</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .myMessage {
+        justify-content: start;
+      }
+      .otherMessage {
+        justify-content: end;
+      }
+      .alertMessage {
+        justify-content: center;
+        color: red;
+        font-weight: bolder;
+      }
+    </style>
   </head>
   <body>
     <div id="wrap">
       <button class="join">참여하기</button>
       <h2>사람수 <a class="peopleCount">0</a>명</h2>
-      <ul id="messages"></ul>
+      <ul id="messages" style="width: 50%"></ul>
       <form action="">
         <input id="m" autocomplete="off" required /><button>Send</button>
       </form>
-      <button class="leaveRoom">나가기</button>
+      <button class="leaveRoom" disabled>나가기</button>
     </div>
     <script
       src="https://cdn.socket.io/3.1.3/socket.io.min.js"
@@ -31,17 +48,39 @@
         autoConnect: false, //자동연결 false, 기본 값은 true
       });
 
-      socket.on("message", function (msg) {
-        $("#messages").append($("<li>").text(msg));
+      socket.on("myMessage", function (msg) {
+        $("#messages").append(
+          $("<li>").css("display", "flex").addClass("myMessage").text(msg)
+        );
+      });
+
+      socket.on("otherMessage", function (msg) {
+        $("#messages").append(
+          $("<li>").css("display", "flex").addClass("otherMessage").text(msg)
+        );
       });
 
       socket.on("count", (data) => {
         $(".peopleCount").html(data);
       });
 
+      socket.on("joinMessage", (data) => {
+        $("#messages").append(
+          $("<li>").css("display", "flex").addClass("alertMessage").text(data)
+        );
+      });
+
+      socket.on("leaveMessage", (data) => {
+        $("#messages").append(
+          $("<li>").css("display", "flex").addClass("alertMessage").text(data)
+        );
+      });
+
       $(".join").click(function () {
         socket.connect();
         socket.emit("joinRoom", "room1");
+        $(".join").attr("disabled", "");
+        $(".leaveRoom").removeAttr("disabled");
       });
 
       $("form").submit(function (e) {
@@ -54,7 +93,11 @@
       });
 
       $(".leaveRoom").click(function () {
+        $(".peopleCount").html(0);
+        $("#messages").html("");
         socket.emit("leave", "room1");
+        $(".join").removeAttr("disabled");
+        $(".leaveRoom").attr("disabled", "");
       });
     </script>
   </body>

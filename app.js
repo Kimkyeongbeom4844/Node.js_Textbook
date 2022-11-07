@@ -116,18 +116,28 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", (data) => {
     socket.join(data);
     setCount(data);
+    io.in(data)
+      .except(socket.id)
+      .emit("joinMessage", `${socket.id}님이 들어왔습니다.`);
   });
 
   socket.on("chatting", (data) => {
     console.log(socket.rooms, data);
     if (socket.rooms.has(data.roomName)) {
-      io.to(data.roomName).emit("message", data.msg);
+      io.in(data.roomName).except(socket.id).emit("otherMessage", data.msg);
+      io.to(socket.id).emit("myMessage", data.msg);
     }
   });
 
   socket.on("leave", (data) => {
+    const someone = socket.id;
     socket.leave(data);
     setCount(data);
+    io.in(data).emit("leaveMessage", `${someone}님이 나갔습니다.`);
+  });
+
+  socket.on("disconnect", (data) => {
+    console.log(data);
   });
 });
 
