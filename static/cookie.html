@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
       document.querySelector(".getCookie").addEventListener("click", () => {
-        fetch("http://127.0.0.1:3000/cookie/", {
+        fetch("http://127.0.0.1:8080/cookie/", {
           credentials: "include",
         })
           // .then((res) => res.json())
@@ -20,7 +20,7 @@
           .catch((err) => console.log(err));
       });
       document.querySelector(".sendCookie").addEventListener("click", () => {
-        fetch("http://127.0.0.1:3000/cookie/", {
+        fetch("http://127.0.0.1:8080/cookie/", {
           method: "POST",
           credentials: "include",
         })

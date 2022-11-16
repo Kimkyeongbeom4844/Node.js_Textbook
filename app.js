@@ -2,26 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
-const mysql = require("mysql");
 const socket = require("socket.io");
 const http = require("http");
 const sign = require("./router/sign");
 const cookie = require("./router/cookie");
 const list = require("./router/list");
+const db = require("./database/db");
 
 dotenv.config();
-
-const db = mysql.createConnection({
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_DB,
-});
-
-db.connect((err) => {
-  if (err) console.error(err);
-  console.log("db연결성공");
-});
 
 //일반 express 서버
 const app = express();

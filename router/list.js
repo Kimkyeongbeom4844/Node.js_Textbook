@@ -1,18 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const mysql = require("mysql");
-
-const db = mysql.createConnection({
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_DB,
-});
-
-// db.connect((err) => {
-//   if (err) console.error(err);
-//   console.log("db연결성공");
-// });
+const db = require("../database/db");
 
 router
   .route("/")
