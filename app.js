@@ -7,6 +7,7 @@ const socket = require("socket.io");
 const http = require("http");
 const sign = require("./router/sign");
 const cookie = require("./router/cookie");
+const list = require("./router/list");
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ const db = mysql.createConnection({
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_DB,
 });
+
 db.connect((err) => {
   if (err) console.error(err);
   console.log("db연결성공");
@@ -46,6 +48,7 @@ app.use(
 
 app.use("/sign", sign);
 app.use("/cookie", cookie);
+app.use("/list", list);
 
 app
   .route("/")
