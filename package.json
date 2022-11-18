@@ -4,7 +4,8 @@
   "description": "node.js 교과서 개정 2 판 연습 레포입니다",
   "main": "app.js",
   "scripts": {
-    "test": "nodemon app"
+    "test": "nodemon app",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
